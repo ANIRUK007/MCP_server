@@ -1,44 +1,135 @@
-# app/orchestrator.py
-
 from app.mistral_client import ask_mistral
 
 
 def run_research(idea: str) -> str:
-    """
-    Runs a fast research analysis using a single Mistral API call.
-    This avoids Render timeout issues.
-    """
+    # Step 1: Industry Analysis
+    industry = ask_mistral(f"""
+You are a senior market analyst.
 
-    prompt = f"""
-You are an expert startup analyst.
+Analyze the industry for this idea: "{idea}"
 
-Analyze the following idea:
-"{idea}"
+Return:
+- Industry classification
+- Sub-sectors
+- Market maturity (emerging/growth/mature)
+- Key drivers
+- Relevant technologies
 
-Provide a concise but structured response with:
+Be detailed and analytical.
+""")
 
-1. Industry:
-   - What industry does this belong to?
+    # Step 2: Target Market
+    market = ask_mistral(f"""
+You are a startup strategist.
 
-2. Target Market:
-   - Who are the customers?
-   - Market size (rough estimate if possible)
+For the idea: "{idea}"
 
-3. Competitors:
-   - List 3-5 competitors
+Define:
+- Target customer segments (very specific)
+- Personas
+- Pain points
+- Market size (with realistic estimates)
+- Growth trends
 
-4. Opportunities:
-   - Key advantages or gaps in the market
+Avoid generic answers.
+""")
 
-5. Risks:
-   - Main challenges or downsides
+    # Step 3: Competitor Intelligence
+    competitors = ask_mistral(f"""
+Act as a competitive intelligence analyst.
 
-Keep it clear, structured, and under 200 words.
-"""
+For: "{idea}"
 
-    try:
-        result = ask_mistral(prompt)
-        return f"<pre>{result}</pre>"
+Provide:
+- Top 5 competitors (real companies)
+- Their strengths & weaknesses
+- Pricing models
+- Gaps in the market
 
-    except Exception as e:
-        return f"<h3>ERROR:</h3><pre>{str(e)}</pre>"
+Be critical, not descriptive.
+""")
+
+    # Step 4: Trends & Insights
+    trends = ask_mistral(f"""
+You are a tech trends researcher.
+
+For: "{idea}"
+
+Provide:
+- Emerging trends
+- Consumer behavior shifts
+- Technology enablers (AI, wearables, etc.)
+- Data-backed insights (if unsure, estimate realistically)
+
+Focus on forward-looking insights.
+""")
+
+    # Step 5: Risks
+    risks = ask_mistral(f"""
+You are a risk analyst.
+
+For: "{idea}"
+
+Identify:
+- Technical risks
+- Market risks
+- Regulatory risks
+- Adoption challenges
+
+Be brutally honest.
+""")
+
+    # Step 6: Opportunities
+    opportunities = ask_mistral(f"""
+You are a venture capitalist.
+
+For: "{idea}"
+
+Identify:
+- High-value opportunities
+- Differentiation strategies
+- Monetization ideas
+- Unique positioning angles
+
+Think like you're deciding to invest.
+""")
+
+    # Step 7: Final Synthesis (THIS IS THE MAGIC STEP)
+    final_report = ask_mistral(f"""
+You are a senior research consultant.
+
+Combine the following analyses into a **high-quality structured report**:
+
+INDUSTRY:
+{industry}
+
+MARKET:
+{market}
+
+COMPETITORS:
+{competitors}
+
+TRENDS:
+{trends}
+
+RISKS:
+{risks}
+
+OPPORTUNITIES:
+{opportunities}
+
+OUTPUT FORMAT:
+
+# Executive Summary
+# Industry Overview
+# Market Analysis
+# Competitive Landscape
+# Key Trends
+# Risks
+# Opportunities
+# Strategic Recommendations
+
+Make it professional, deep, and investor-grade.
+""")
+
+    return final_report
