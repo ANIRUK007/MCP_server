@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"]
+    },
+    "browser": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-browser"]
+    },
+    "deep_research": {
+      "command": "python",
+      "args": ["mcp_servers/deep_research_server.py"]
+    }
+  }
+}

@@ -1,5 +1,6 @@
-mistralai
 fastapi
-uvicorn
-python-dotenv
+uvicorn[standard]
+mistralai>=1.0.0
+httpx
+markdown
 python-multipart
